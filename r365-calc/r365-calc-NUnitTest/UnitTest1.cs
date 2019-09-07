@@ -30,6 +30,7 @@ namespace Tests
             Assert.That(calc.Output() == 3);
         }
 
+        
         [Test]
         public void NoValue()
         {
@@ -53,5 +54,14 @@ namespace Tests
             calc.Calculate("1,2,3,4,5,6,7,8,9,10,11,12");
             Assert.That(calc.Output() == 78);
         }
+
+        [Test]
+        public void Newline()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("1\n2,3");
+            Assert.That(calc.Output() == 6);
+        }
+
     }
 }

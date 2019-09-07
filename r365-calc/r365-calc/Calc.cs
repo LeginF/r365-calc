@@ -26,7 +26,8 @@ namespace r365_calc
         /// <returns></returns>
         private string[] Tokenize(string input)
         {
-            return input.Split(",");
+            char[] delims = { ',', '\n' };
+            return input.Split(delims);
         }
 
         /// <summary>
