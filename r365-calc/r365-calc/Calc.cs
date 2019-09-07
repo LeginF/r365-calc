@@ -16,9 +16,6 @@ namespace r365_calc
         {
             var tokens = Tokenize(input);
 
-            // Requirement one is for only a most two values.
-            if (tokens.Length > 2) throw new ArgumentException("Too many values.");
-
             Parse(tokens);
         }
 

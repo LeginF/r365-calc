@@ -25,7 +25,9 @@ namespace Tests
         public void ThreeValue()
         {
             var calc = new r365_calc.Calc();
-            Assert.Throws<System.ArgumentException>(() => calc.Calculate("1,1,1"));
+            // Changed requirement. No longer limited to a max of two values.
+            calc.Calculate("1,1,1");
+            Assert.That(calc.Output() == 3);
         }
 
         [Test]
@@ -42,6 +44,14 @@ namespace Tests
             var calc = new r365_calc.Calc();
             calc.Calculate("5,tytyt");
             Assert.That(calc.Output() == 5);
+        }
+
+        [Test]
+        public void MultipleValues()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("1,2,3,4,5,6,7,8,9,10,11,12");
+            Assert.That(calc.Output() == 78);
         }
     }
 }
