@@ -63,5 +63,12 @@ namespace Tests
             Assert.That(calc.Output() == 6);
         }
 
+        [Test]
+        public void NoNegatives()
+        {
+            var calc = new r365_calc.Calc();
+            Assert.Throws<System.ApplicationException>(() => calc.Calculate("1,-2,3,-4"))
+                .Message.Equals("Negatives are not allowed. You had: -2,-4");
+        }
     }
 }

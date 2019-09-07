@@ -16,7 +16,9 @@ namespace r365_calc
         {
             var tokens = Tokenize(input);
 
-            Parse(tokens);
+            var values = Parse(tokens);
+            CheckForNegatives(values);
+            Summate(values);
         }
 
         /// <summary>
@@ -31,19 +33,55 @@ namespace r365_calc
         }
 
         /// <summary>
-        /// Parse the tokens and perform summation.
+        /// Check that no values are negative. Throw an exception if
+        /// found and report what they were.
+        /// </summary>
+        /// <param name="values"></param>
+        private void CheckForNegatives(int[] values)
+        {
+            string negatives = string.Empty;
+
+            foreach(var value in values)
+            {
+                if (value < 0)
+                {
+                    negatives += $"{value},";
+                }
+            }
+
+            if (negatives.Length > 0)
+            {
+                negatives = negatives.Substring(0, negatives.Length - 1);
+                throw new ApplicationException("Negatives are not allowed. You had: " + negatives);
+            }
+        }
+
+        /// <summary>
+        /// Parse the tokens and return an array of integers.
         /// </summary>
         /// <param name="tokens"></param>
-        private void Parse(string[] tokens)
+        private int[] Parse(string[] tokens)
         {
+            var values = new List<int>();
             foreach (var token in tokens)
             {
                 if (int.TryParse(token, out int value))
                 {
-                    Add(value);
+                    values.Add(value);
                 }
             }
 
+            return values.ToArray();
+        }
+
+        /// <summary>
+        /// Summate the array of integers.
+        /// </summary>
+        /// <param name="values"></param>
+        private void Summate(int[] values)
+        {
+            foreach (var value in values)
+                Add(value);
         }
 
         /// <summary>
