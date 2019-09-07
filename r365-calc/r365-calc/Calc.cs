@@ -65,7 +65,7 @@ namespace r365_calc
             var values = new List<int>();
             foreach (var token in tokens)
             {
-                if (int.TryParse(token, out int value))
+                if ((int.TryParse(token, out int value)) && (value <= 1000))
                 {
                     values.Add(value);
                 }

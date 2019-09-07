@@ -4,6 +4,7 @@
 // Requirement 2: Support an unlimited number of numbers e.g. 1,2,3,4,5,6,7,8,9,10,11,12 will return 78
 // Requirement 3: Support \n as delimiter
 // Requirement 4: No negatives. Throw exception and report.
+// Requirement 5: Ignore numbers over 1000.
 
 namespace r365_calc
 {

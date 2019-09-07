@@ -17,8 +17,8 @@ namespace Tests
         public void TwoValue()
         {
             var calc = new r365_calc.Calc();
-            calc.Calculate("1,5000");
-            Assert.That(calc.Output() == 5001);
+            calc.Calculate("1,500");
+            Assert.That(calc.Output() == 501);
         }
 
         [Test]
@@ -69,6 +69,14 @@ namespace Tests
             var calc = new r365_calc.Calc();
             Assert.Throws<System.ApplicationException>(() => calc.Calculate("1,-2,3,-4"))
                 .Message.Equals("Negatives are not allowed. You had: -2,-4");
+        }
+
+        [Test]
+        public void UnderThousand()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("2,1001,6");
+            Assert.That(calc.Output() == 8);
         }
     }
 }
