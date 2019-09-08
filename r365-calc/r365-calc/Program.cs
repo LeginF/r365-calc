@@ -8,6 +8,7 @@
 // Requirement 6: Allow custom delimiter
 // Requirement 7: Allow custom delimiter of any length
 // Requirement 8: Support multiple delmiiters of any length
+// Strech 1: Display formula
 
 namespace r365_calc
 {
@@ -23,7 +24,7 @@ namespace r365_calc
                     // Perform calculation on parameter and output result.
                     var calc = new Calc();
                     calc.Calculate(args[0]);
-                    Console.WriteLine("{0}", calc.Output());
+                    Console.WriteLine("{1} = {0}", calc.Output(), calc.History());
                 }
                 catch (ArgumentException ex)
                 {

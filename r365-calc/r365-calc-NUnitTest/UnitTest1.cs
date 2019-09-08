@@ -102,5 +102,15 @@ namespace Tests
             calc.Calculate("//[*][!!][r9r]\n11r9r22*33!!44");
             Assert.That(calc.Output() == 110);
         }
+
+
+        [Test]
+        public void ShowFormula()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("2,4,rrrr,1001,6");
+            Assert.That(calc.Output() == 12);
+            Assert.That(calc.History() == "2+4+0+0+6");
+        }
     }
 }

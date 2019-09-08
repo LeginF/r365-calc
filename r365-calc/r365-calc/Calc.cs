@@ -8,11 +8,13 @@ namespace r365_calc
     {
         private int _sum = 0;
         private List<string> _delims;
+        private List<string> _history;
 
         public Calc()
         {
             // by default, newlines and commas are supported as delimiters.
             _delims = new List<string>() { ",", "\n" };
+            _history = new List<string>();
         }
 
         /// <summary>
@@ -148,6 +150,10 @@ namespace r365_calc
                 {
                     values.Add(value);
                 }
+                else
+                {
+                    values.Add(0);
+                }
             }
 
             return values.ToArray();
@@ -170,6 +176,7 @@ namespace r365_calc
         private void Add(int value)
         {
             _sum += value;
+            _history.Add($"+{value}");
         }
 
         /// <summary>
@@ -187,6 +194,21 @@ namespace r365_calc
         public void Reset()
         {
             _sum = 0;
+            _history.Clear();
+        }
+
+        public string History()
+        {
+            string history = string.Empty;
+            foreach(var operation in _history)
+            {
+                history += operation;
+            }
+
+            if (history.StartsWith("+"))
+                return history.Substring(1);
+            else
+                return history;
         }
     }
 }
