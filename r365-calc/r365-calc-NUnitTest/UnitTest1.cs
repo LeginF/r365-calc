@@ -67,6 +67,7 @@ namespace Tests
         public void NoNegatives()
         {
             var calc = new r365_calc.Calc();
+            calc.NoNegatives = true;
             Assert.Throws<System.ApplicationException>(() => calc.Calculate("1,-2,3,-4"))
                 .Message.Equals("Negatives are not allowed. You had: -2,-4");
         }
@@ -75,6 +76,7 @@ namespace Tests
         public void UnderThousand()
         {
             var calc = new r365_calc.Calc();
+            calc.UpperBound = 1000;
             calc.Calculate("2,1001,6");
             Assert.That(calc.Output() == 8);
         }
@@ -108,6 +110,7 @@ namespace Tests
         public void ShowFormula()
         {
             var calc = new r365_calc.Calc();
+            calc.UpperBound = 1000;
             calc.Calculate("2,4,rrrr,1001,6");
             Assert.That(calc.Output() == 12);
             Assert.That(calc.History() == "2+4+0+0+6");

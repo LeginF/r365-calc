@@ -10,11 +10,15 @@ namespace r365_calc
         private List<string> _delims;
         private List<string> _history;
 
+        public int UpperBound { get; set; }
+        public bool NoNegatives { get; set; }
+
         public Calc()
         {
             // by default, newlines and commas are supported as delimiters.
             _delims = new List<string>() { ",", "\n" };
             _history = new List<string>();
+            UpperBound = int.MaxValue;
         }
 
         /// <summary>
@@ -47,7 +51,7 @@ namespace r365_calc
                 var tokens = input.Substring(3, crPosition - 3).Split(delims);
                 foreach(var token in tokens)
                 {
-                   if (token.Length > 0) _delims.Add(token);
+                    if (token.Length > 0) AddDelimiter(token);
                 }
                 return input.Substring(crPosition + 1);
             }
@@ -59,6 +63,11 @@ namespace r365_calc
             }
 
             return input;
+        }
+
+        public void AddDelimiter(string delimiter)
+        {
+            _delims.Add(delimiter);
         }
 
         /// <summary>
@@ -124,7 +133,7 @@ namespace r365_calc
 
             foreach(var value in values)
             {
-                if (value < 0)
+                if ((NoNegatives) && (value < 0))
                 {
                     negatives += $"{value},";
                 }
@@ -146,7 +155,7 @@ namespace r365_calc
             var values = new List<int>();
             foreach (var token in tokens)
             {
-                if ((int.TryParse(token, out int value)) && (value <= 1000))
+                if ((int.TryParse(token, out int value)) && (value <= UpperBound))
                 {
                     values.Add(value);
                 }

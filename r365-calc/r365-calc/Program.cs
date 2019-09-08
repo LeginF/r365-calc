@@ -8,24 +8,29 @@
 // Requirement 6: Allow custom delimiter
 // Requirement 7: Allow custom delimiter of any length
 // Requirement 8: Support multiple delmiiters of any length
-// Strech 1: Display formula
-// Strech 2: Keep accepting entries
+// Stretch 1: Display formula
+// Stretch 2: Keep accepting entries
+// Stretch 3: Command line arguments
 
 namespace r365_calc
 {
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
+            var calc = new Calc();
+
+            ProcessArguments(args, calc);
+
             while (true)
             {
+                calc.Reset();
                 var line = Console.ReadLine();
                 if (line.StartsWith("//"))
                     line += '\n' + Console.ReadLine();
                 try
                 {
                     // Perform calculation on parameter and output result.
-                    var calc = new Calc();
                     calc.Calculate(line);
                     Console.WriteLine("{1} = {0}", calc.Output(), calc.History());
                 }
@@ -37,6 +42,39 @@ namespace r365_calc
                 {
                     Console.WriteLine(ex.Message);
                 }
+            }
+        }
+
+        private static void ProcessArguments(string[] args, Calc calc)
+        {
+            bool setDelimiter = false;
+            bool setUpperBound = false;
+
+            foreach (var arg in args)
+            {
+                if (setDelimiter)
+                {
+                    calc.AddDelimiter(arg);
+                    setDelimiter = false;
+                    continue;
+                }
+
+                if (setUpperBound)
+                {
+                    if (!int.TryParse(arg, out int upperBound))
+                        Console.WriteLine($"Invalid upper bound {arg}. Must be a number.");
+                    else
+                        calc.UpperBound = upperBound;
+
+                    setUpperBound = false;
+                    continue;
+                }
+
+                setDelimiter = arg.StartsWith("--Delimiter");
+                setUpperBound = arg.StartsWith("--Upperbound");
+
+                if (arg.StartsWith("--NoNegatives"))
+                    calc.NoNegatives = true;
             }
         }
     }
