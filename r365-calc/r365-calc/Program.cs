@@ -9,21 +9,24 @@
 // Requirement 7: Allow custom delimiter of any length
 // Requirement 8: Support multiple delmiiters of any length
 // Strech 1: Display formula
+// Strech 2: Keep accepting entries
 
 namespace r365_calc
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            // Ensure one parameter is passed to app.
-            if (args.Length == 1)
+            while (true)
             {
+                var line = Console.ReadLine();
+                if (line.StartsWith("//"))
+                    line += '\n' + Console.ReadLine();
                 try
                 {
                     // Perform calculation on parameter and output result.
                     var calc = new Calc();
-                    calc.Calculate(args[0]);
+                    calc.Calculate(line);
                     Console.WriteLine("{1} = {0}", calc.Output(), calc.History());
                 }
                 catch (ArgumentException ex)
@@ -35,11 +38,6 @@ namespace r365_calc
                     Console.WriteLine(ex.Message);
                 }
             }
-            else
-            {
-                Console.WriteLine("Input requires numbers separated by commas, no spaces.");
-            }
-
         }
     }
 }
