@@ -86,5 +86,13 @@ namespace Tests
             calc.Calculate("//;\n2;5");
             Assert.That(calc.Output() == 7);
         }
+
+        [Test]
+        public void CustomArbitaryDelimiter()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("//[***]\n11***22***33");
+            Assert.That(calc.Output() == 66);
+        }
     }
 }

@@ -6,6 +6,7 @@
 // Requirement 4: No negatives. Throw exception and report.
 // Requirement 5: Ignore numbers over 1000.
 // Requirement 6: Allow custom delimiter
+// Requirement 7: Allow custom delimiter of any length
 
 namespace r365_calc
 {
@@ -24,6 +25,10 @@ namespace r365_calc
                     Console.WriteLine("{0}", calc.Output());
                 }
                 catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (ApplicationException ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
