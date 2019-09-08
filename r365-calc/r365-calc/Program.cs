@@ -11,6 +11,7 @@
 // Stretch 1: Display formula
 // Stretch 2: Keep accepting entries
 // Stretch 3: Command line arguments
+// Stretch 4: Support Subtractor, Multiplication and Division
 
 namespace r365_calc
 {

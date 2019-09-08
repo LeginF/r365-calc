@@ -115,5 +115,14 @@ namespace Tests
             Assert.That(calc.Output() == 12);
             Assert.That(calc.History() == "2+4+0+0+6");
         }
+
+        [Test]
+        public void AddSubractMultiplyDivide()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("1,2,*,3,/,3,-,1");
+            Assert.That(calc.Output() == 2);
+            Assert.That(calc.History() == "1+2*3/3-1");
+        }
     }
 }

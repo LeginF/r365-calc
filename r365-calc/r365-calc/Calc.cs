@@ -9,6 +9,7 @@ namespace r365_calc
         private int _sum = 0;
         private List<string> _delims;
         private List<string> _history;
+        private Queue<string> _operators;
 
         public int UpperBound { get; set; }
         public bool NoNegatives { get; set; }
@@ -19,6 +20,7 @@ namespace r365_calc
             _delims = new List<string>() { ",", "\n" };
             _history = new List<string>();
             UpperBound = int.MaxValue;
+            _operators = new Queue<string>();
         }
 
         /// <summary>
@@ -152,20 +154,44 @@ namespace r365_calc
         /// <param name="tokens">Array of tokens to parse.</param>
         private int[] Parse(string[] tokens)
         {
+            bool operand = false;
             var values = new List<int>();
             foreach (var token in tokens)
             {
+                // Enqueue explicit operators
+                if (IsOperator(token))
+                {
+                    _operators.Enqueue(token);
+                    operand = true;
+                    continue;
+                }
                 if ((int.TryParse(token, out int value)) && (value <= UpperBound))
                 {
                     values.Add(value);
+
+                    // If there was no operator then addition is implied
+                    if (!operand) _operators.Enqueue("+");
+                    operand = false;
                 }
                 else
                 {
+                    // Assume addition of zero on garbage input
                     values.Add(0);
+                    _operators.Enqueue("+");
                 }
             }
 
             return values.ToArray();
+        }
+
+        /// <summary>
+        /// Returns true is input was +, -, * or /
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>true is input was an operator</returns>
+        private bool IsOperator(string input)
+        {
+            return ((input == "+") || (input == "-") || (input == "*") || (input == "/"));
         }
 
         /// <summary>
@@ -175,7 +201,24 @@ namespace r365_calc
         private void Summate(int[] values)
         {
             foreach (var value in values)
-                Add(value);
+            {
+                try
+                {
+                    switch (_operators.Dequeue())
+                    {
+                        case "+": Add(value); break;
+                        case "-": Subtract(value); break;
+                        case "*": Multiply(value); break;
+                        case "/": Divide(value); break;
+                        default:
+                            throw new ApplicationException("Unrecognized operator");
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    throw new ApplicationException("No matching operator");
+                }
+            }
         }
 
         /// <summary>
@@ -188,6 +231,35 @@ namespace r365_calc
             _history.Add($"+{value}");
         }
 
+        /// <summary>
+        /// Subtract value from _sum
+        /// </summary>
+        /// <param name="value"></param>
+        private void Subtract(int value)
+        {
+            _sum -= value;
+            _history.Add($"-{value}");
+        }
+
+        /// <summary>
+        /// Multiply _sum by value
+        /// </summary>
+        /// <param name="value"></param>
+        private void Multiply(int value)
+        {
+            _sum *= value;
+            _history.Add($"*{value}");
+        }
+
+        /// <summary>
+        /// Divide _sum by value
+        /// </summary>
+        /// <param name="value"></param>
+        private void Divide(int value)
+        {
+            _sum /= value;
+            _history.Add($"/{value}");
+        }
         /// <summary>
         /// Return the value of _sum
         /// </summary>
