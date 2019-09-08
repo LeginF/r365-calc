@@ -7,6 +7,7 @@ namespace r365_calc
     public class Calc
     {
         private int _sum = 0;
+        private char _delim = ',';
 
         /// <summary>
         /// Summate list of integers in the input. Ignore none non-integers.
@@ -14,11 +15,23 @@ namespace r365_calc
         /// <param name="input"></param>
         public void Calculate(string input)
         {
+            input = SetCustomDelimiter(input);
             var tokens = Tokenize(input);
 
             var values = Parse(tokens);
             CheckForNegatives(values);
             Summate(values);
+        }
+
+        private string SetCustomDelimiter(string input)
+        {
+            if (input.StartsWith("//"))
+            {
+                _delim = input[2];
+                return input.Substring(3);
+            }
+
+            return input;
         }
 
         /// <summary>
@@ -28,7 +41,7 @@ namespace r365_calc
         /// <returns></returns>
         private string[] Tokenize(string input)
         {
-            char[] delims = { ',', '\n' };
+            char[] delims = { _delim, '\n' };
             return input.Split(delims);
         }
 

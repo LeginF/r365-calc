@@ -5,6 +5,7 @@
 // Requirement 3: Support \n as delimiter
 // Requirement 4: No negatives. Throw exception and report.
 // Requirement 5: Ignore numbers over 1000.
+// Requirement 6: Allow custom delimiter
 
 namespace r365_calc
 {

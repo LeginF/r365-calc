@@ -78,5 +78,13 @@ namespace Tests
             calc.Calculate("2,1001,6");
             Assert.That(calc.Output() == 8);
         }
+
+        [Test]
+        public void CustomDelimiter()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("//;\n2;5");
+            Assert.That(calc.Output() == 7);
+        }
     }
 }
