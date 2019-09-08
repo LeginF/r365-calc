@@ -7,6 +7,7 @@
 // Requirement 5: Ignore numbers over 1000.
 // Requirement 6: Allow custom delimiter
 // Requirement 7: Allow custom delimiter of any length
+// Requirement 8: Support multiple delmiiters of any length
 
 namespace r365_calc
 {

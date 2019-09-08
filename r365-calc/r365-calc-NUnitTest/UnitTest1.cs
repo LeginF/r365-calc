@@ -94,5 +94,13 @@ namespace Tests
             calc.Calculate("//[***]\n11***22***33");
             Assert.That(calc.Output() == 66);
         }
+
+        [Test]
+        public void CustomMultipleArbitaryDelimiter()
+        {
+            var calc = new r365_calc.Calc();
+            calc.Calculate("//[*][!!][r9r]\n11r9r22*33!!44");
+            Assert.That(calc.Output() == 110);
+        }
     }
 }
