@@ -9,7 +9,48 @@ namespace r365_calc
         private int _sum = 0;
         private List<string> _delims;
         private List<string> _history;
-        private Queue<string> _operators;
+        private Queue<Step> _steps;
+
+        private delegate void Operation(int Value);
+
+        /// <summary>
+        /// A step in the calculation
+        /// </summary>
+        private class Step
+        {
+            private Operation _operation;
+            public int? Value { get; set; }
+                        
+            public Step(Operation operation, int value)
+            {
+                _operation = operation;
+                Value = value;
+            }
+
+            public Step(Operation operation)
+            {
+                _operation = operation;
+                Value = null;
+            }
+
+            public static Step Factory(string operation, Calc calc)
+            {
+                switch(operation)
+                {
+                    case "+": return new Step(calc.Add);
+                    case "-": return new Step(calc.Subtract);
+                    case "*": return new Step(calc.Multiply);
+                    case "/": return new Step(calc.Divide);
+                }
+                return null;
+            }
+
+            public void Execute()
+            {
+                if (Value == null) throw new InvalidOperationException("No value defined.");
+                _operation((int)Value);
+            }
+        }
 
         public int UpperBound { get; set; }
         public bool NoNegatives { get; set; }
@@ -20,7 +61,7 @@ namespace r365_calc
             _delims = new List<string>() { ",", "\n" };
             _history = new List<string>();
             UpperBound = int.MaxValue;
-            _operators = new Queue<string>();
+            _steps = new Queue<Step>();
         }
 
         /// <summary>
@@ -32,9 +73,9 @@ namespace r365_calc
             input = SetCustomDelimiter(input);
             var tokens = Tokenize(input);
 
-            var values = Parse(tokens);
-            CheckForNegatives(values);
-            Summate(values);
+            Parse(tokens);
+            CheckForNegatives();
+            Summate();
         }
 
         /// <summary>
@@ -129,15 +170,15 @@ namespace r365_calc
         /// found and report what they were.
         /// </summary>
         /// <param name="values">Array of values to check for negative values.</param>
-        private void CheckForNegatives(int[] values)
+        private void CheckForNegatives()
         {
             string negatives = string.Empty;
 
-            foreach(var value in values)
+            foreach(var step in _steps)
             {
-                if ((NoNegatives) && (value < 0))
+                if ((NoNegatives) && (step.Value < 0))
                 {
-                    negatives += $"{value},";
+                    negatives += $"{step.Value},";
                 }
             }
 
@@ -149,39 +190,36 @@ namespace r365_calc
         }
 
         /// <summary>
-        /// Parse the tokens and return an array of integers.
+        /// Parse the tokens and create a queue of steps.
         /// </summary>
-        /// <param name="tokens">Array of tokens to parse.</param>
-        private int[] Parse(string[] tokens)
+        private void Parse(string[] tokens)
         {
             bool operand = false;
-            var values = new List<int>();
+            Step step = null;
             foreach (var token in tokens)
             {
                 // Enqueue explicit operators
-                if (IsOperator(token))
+                if (IsOperator(token, out var newStep))
                 {
-                    _operators.Enqueue(token);
+                    step = newStep;
+                    _steps.Enqueue(step);
                     operand = true;
                     continue;
                 }
                 if ((int.TryParse(token, out int value)) && (value <= UpperBound))
                 {
-                    values.Add(value);
-
                     // If there was no operator then addition is implied
-                    if (!operand) _operators.Enqueue("+");
+                    if (!operand) _steps.Enqueue(new Step(this.Add, value));
+                    // If there was a prior operator, apply the value to the step
+                    else step.Value = value;
                     operand = false;
                 }
                 else
                 {
                     // Assume addition of zero on garbage input
-                    values.Add(0);
-                    _operators.Enqueue("+");
+                    _steps.Enqueue(new Step(this.Add, 0));
                 }
             }
-
-            return values.ToArray();
         }
 
         /// <summary>
@@ -189,35 +227,22 @@ namespace r365_calc
         /// </summary>
         /// <param name="input"></param>
         /// <returns>true is input was an operator</returns>
-        private bool IsOperator(string input)
+        private bool IsOperator(string input, out Step step)
         {
-            return ((input == "+") || (input == "-") || (input == "*") || (input == "/"));
+            step = Step.Factory(input, this);
+            return (step != null);
         }
 
         /// <summary>
         /// Summate the array of integers.
         /// </summary>
         /// <param name="values"></param>
-        private void Summate(int[] values)
+        private void Summate()
         {
-            foreach (var value in values)
+            while (_steps.Count > 0)
             {
-                try
-                {
-                    switch (_operators.Dequeue())
-                    {
-                        case "+": Add(value); break;
-                        case "-": Subtract(value); break;
-                        case "*": Multiply(value); break;
-                        case "/": Divide(value); break;
-                        default:
-                            throw new ApplicationException("Unrecognized operator");
-                    }
-                }
-                catch (InvalidOperationException)
-                {
-                    throw new ApplicationException("No matching operator");
-                }
+                var step = _steps.Dequeue();
+                step.Execute();
             }
         }
 
